@@ -31,7 +31,7 @@ public interface StoreApiService {
     @GET("/store/{staffId}")
     Call<StaffResponseDto> getStaffByStaffId(@Path("staffId") Long staffId);
 
-    //사업장 조회
+    //사업장 코드로 사업장 조회
     @GET("/store/{storeCode}")
     Call<StoreResponseDto> getStore(@Path("storeCode") Long storeCode);
 

@@ -49,10 +49,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SelectStore extends AppCompatActivity implements View.OnClickListener {
 
-    String storeName, address;
+    String storeName, address, userId;
     ImageButton searchIbtn;
     Button storeregBtn;
-    FrameLayout onelistF;
+
     int store_Code;
     Dialog showComplete_dialog, showConfirm_dialog;
     BaseDialog_OkCenter baseDialog_okCenter, baseDialog_okCenter2;
@@ -60,6 +60,7 @@ public class SelectStore extends AppCompatActivity implements View.OnClickListen
     private SelectStore_RecyclerViewAdpater mRecyclerViewAdapter;
     private List<SelectStore_recyclerViewItem> mList;
     TextView searchstore_dl2_storeNameTv, searchstore_dl2_addressTv;
+//    StoreData storeData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,6 @@ public class SelectStore extends AppCompatActivity implements View.OnClickListen
 
         storeregBtn = findViewById(R.id.selectstore_storeregBtn); storeregBtn.setOnClickListener(this);
         searchIbtn = findViewById(R.id.selectstore_searchIbtn); searchIbtn.setOnClickListener(this);
-        //onelistF = findViewById(R.id.selectstore_onelistF); onelistF.setOnClickListener(this);
 
         baseDialog_okCenter = new BaseDialog_OkCenter(SelectStore.this, R.layout.searchstore_dl);
         baseDialog_okCenter2 = new BaseDialog_OkCenter(SelectStore.this, R.layout.searchstore_dl2);
@@ -83,10 +83,14 @@ public class SelectStore extends AppCompatActivity implements View.OnClickListen
 
         // ID값 가지고 오기
         LoginData loginData = (LoginData) getApplication(); // MyApplication 클래스의 인스턴스 가져오기
-        String userId = loginData.getUserId(); // 사용자 ID 가져오기
+        userId = loginData.getUserId(); // 사용자 ID 가져오기
 
 
+        /*
+        //storeid저장
+        storeData = (StoreData)getApplication();
         //리사이클러뷰를 통해 사업장 리스트 가지고 오기
+         */
         firstInit();
 
         mRecyclerViewAdapter = new SelectStore_RecyclerViewAdpater(mList);
@@ -143,14 +147,6 @@ public class SelectStore extends AppCompatActivity implements View.OnClickListen
                 startActivity(intent);
                 finish();
                 break;
-                /*
-            case R.id.selectstore_onelistF: // 리스트
-                intent = new Intent(getApplicationContext(), Home_Ceo.class);
-                startActivity(intent);
-                finish();
-                break;
-
-                 */
             case R.id.selectstore_searchIbtn: // 사업장 검색
                 showSearchStoreDl();
 
@@ -160,6 +156,7 @@ public class SelectStore extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    // 사업장 코드 검색 다이얼로그
     public void showSearchStoreDl(){
         showComplete_dialog.show();
         // 다이얼로그의 배경을 투명으로 만든다.
@@ -237,8 +234,8 @@ public class SelectStore extends AppCompatActivity implements View.OnClickListen
                             Toast.makeText(getApplicationContext(), "사업장 코드가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                         }
 
-                        }
-                        else {
+                    }
+                    else {
                         Toast.makeText(getApplicationContext(), "실패", Toast.LENGTH_SHORT).show();
 
                     }
@@ -280,7 +277,7 @@ public class SelectStore extends AppCompatActivity implements View.OnClickListen
 
                     // 사업장등록에 필요한 데이터를 StoreRequestDto 객체로 생성
                     StaffRequestDto staffRequestDto = new StaffRequestDto(
-                            "814",
+                            userId,
                             store_Code,
                             null,
                             null,
@@ -340,8 +337,22 @@ public class SelectStore extends AppCompatActivity implements View.OnClickListen
         mList.clear(); // 기존 데이터를 모두 지우고 새로운 데이터로 갱신
         for (StoreResponseDto store : stores) {
             addItem(store.getName(), store.getAddress(), "" + store.getCount());
+
         }
         mRecyclerViewAdapter.notifyDataSetChanged(); // 어댑터에 데이터 변경 알림
+//        mRecyclerViewAdapter.setOnItemClickListener(new SelectStore_RecyclerViewAdpater.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(int position) {
+//                // 해당 아이템 레이아웃 클릭 시 처리할 코드 이쪽 수정 필!
+//                /*
+//                storeData.setStoreId(storeId); //storeId저장
+//                storeData.setStoreCode(store_Code);
+//                 */
+//                Intent intent = new Intent(getApplicationContext(), Home_Ceo.class); //사장, 스테프 구분 필요
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
     }
 
     private void handleError(String errorMsg) {
